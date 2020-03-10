@@ -1,10 +1,12 @@
 package no.hvl.dat110.broker;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import no.hvl.dat110.common.TODO;
+import no.hvl.dat110.messages.PublishMsg;
 import no.hvl.dat110.common.Logger;
 import no.hvl.dat110.messagetransport.Connection;
 
@@ -19,9 +21,13 @@ public class Storage {
 	
 	protected ConcurrentHashMap<String, ClientSession> clients;
 
+	protected ConcurrentHashMap<String, Set<PublishMsg>> offlineStorage;
+	
+	
 	public Storage() {
 		subscriptions = new ConcurrentHashMap<String, Set<String>>();
 		clients = new ConcurrentHashMap<String, ClientSession>();
+		offlineStorage = new ConcurrentHashMap<String, Set<PublishMsg>>();
 	}
 
 	public Collection<ClientSession> getSessions() {
@@ -53,47 +59,70 @@ public class Storage {
 	public void addClientSession(String user, Connection connection) {
 
 		// TODO: add corresponding client session to the storage
+		//DONE
 		
-		throw new UnsupportedOperationException(TODO.method());
+		clients.put(user, new ClientSession(user, connection));
 		
 	}
 
 	public void removeClientSession(String user) {
 
 		// TODO: remove client session for user from the storage
-
-		throw new UnsupportedOperationException(TODO.method());
+		//DONE
+		
+		clients.remove(user);
 		
 	}
 
+	public void addOfflineUser(String user) {
+		offlineStorage.put(user, new HashSet<PublishMsg>());
+	}
+	
+	public Set<PublishMsg> getOfflineMessages(String user) {
+		return offlineStorage.get(user);
+	}
+
+	public void addOfflineMessage(String user, PublishMsg message) {
+		offlineStorage.get(user).add(message);
+	}
+	
+	public void removeOfflineUser(String user) {
+		offlineStorage.remove(user);
+		
+	}
+	
 	public void createTopic(String topic) {
 
 		// TODO: create topic in the storage
-
-		throw new UnsupportedOperationException(TODO.method());
-	
+		//DONE
+		
+		subscriptions.put(topic, new HashSet<String>());
+		
 	}
 
 	public void deleteTopic(String topic) {
 
 		// TODO: delete topic from the storage
-
-		throw new UnsupportedOperationException(TODO.method());
+		//DONE
+		
+		getTopics().remove(topic);
 		
 	}
 
 	public void addSubscriber(String user, String topic) {
 
 		// TODO: add the user as subscriber to the topic
+		//DONE
 		
-		throw new UnsupportedOperationException(TODO.method());
-		
+		subscriptions.get(topic).add(user);
 	}
 
 	public void removeSubscriber(String user, String topic) {
 
 		// TODO: remove the user as subscriber to the topic
-
-		throw new UnsupportedOperationException(TODO.method());
+		//DONE
+		
+		subscriptions.get(topic).remove(user);
+		
 	}
 }
